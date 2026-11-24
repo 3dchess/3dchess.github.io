@@ -1,0 +1,91 @@
+---
+import type { LocaleCode, PageSlug } from '../i18n/locales';
+import { getLocalizedPath, SUPPORTED_LOCALES } from '../i18n/locales';
+import { getTranslations } from '../i18n/translations';
+
+interface Props {
+  locale: LocaleCode;
+  page: PageSlug;
+}
+
+const { locale, page } = Astro.props;
+const t = getTranslations(locale);
+const year = 2026;
+---
+
+<footer class="mt-16 border-t border-line bg-card/60">
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+      <div class="max-w-md space-y-3">
+        <a
+          href={getLocalizedPath(locale, 'home')}
+          class="inline-flex items-center gap-2.5 text-lg font-bold tracking-tight text-ink-primary"
+        >
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-slate text-page dark:bg-accent dark:text-[#11151C]">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18 20H6v-2h12v2zm-1-3H7l1.2-3.6c.3-.9.9-1.7 1.7-2.2L11 10.5c-.8-.3-1.6-.4-2.4-.1l-1.8.6-.9-2.2 2.2-1.8c.9-.7 1.7-1.6 2.1-2.7L11 3h2.2l.8 1.5c1.7.4 3.1 1.6 3.7 3.3.5 1.4.4 3-.2 4.3-.4.8-.9 1.6-1.5 2.2L17 17z" />
+            </svg>
+          </span>
+          <span>3DChess</span>
+        </a>
+        <p class="text-sm leading-relaxed text-ink-secondary">
+          {t.footer.tagline}
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-x-8 gap-y-4 text-sm">
+        <div class="flex flex-col gap-2">
+          <a href={getLocalizedPath(locale, 'home')} class="font-medium text-ink-secondary hover:text-ink-primary">
+            {t.nav.home}
+          </a>
+          <a href={getLocalizedPath(locale, 'how-to-play')} class="font-medium text-ink-secondary hover:text-ink-primary">
+            {t.nav.howToPlay}
+          </a>
+          <a href={getLocalizedPath(locale, 'hire-me')} class="font-medium text-ink-secondary hover:text-ink-primary">
+            {t.nav.hireMe}
+          </a>
+        </div>
+        <div class="flex flex-col gap-2">
+          <a
+            href="https://kisharadilshan.gumroad.com/coffee"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-accent-text hover:underline"
+          >
+            {t.footer.supportLink}
+          </a>
+          <a
+            href="https://github.com/3dchess/3dchess.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-ink-secondary hover:text-ink-primary"
+          >
+            {t.footer.openSource}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs text-ink-secondary">
+        © {year} 3DChess · {t.footer.builtBy}
+      </p>
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        {SUPPORTED_LOCALES.map((loc) => (
+          <a
+            href={getLocalizedPath(loc.code, page)}
+            hreflang={loc.code}
+            class:list={[
+              'rounded px-2 py-1 transition-colors',
+              loc.code === locale
+                ? 'bg-subtle font-semibold text-ink-primary'
+                : 'text-ink-secondary hover:bg-subtle/60 hover:text-ink-primary',
+            ]}
+          >
+            {loc.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

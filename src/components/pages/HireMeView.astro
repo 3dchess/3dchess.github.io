@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import type { LocaleCode } from '../../i18n/locales';
+import { getLocalizedPath } from '../../i18n/locales';
+import { getTranslations } from '../../i18n/translations';
+import { buildHireMeSchemas } from '../../lib/schemas';
+
+interface Props {
+  locale: LocaleCode;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+const schemas = buildHireMeSchemas(locale, t);
+---
+
+<BaseLayout
+  locale={locale}
+  page="hire-me"
+  title={t.hireMe.title}
+  description={t.hireMe.description}
+  schemas={schemas}
+>
+  <article class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <Breadcrumbs locale={locale} page="hire-me" />
+
+    <section class="surface-card rounded-2xl p-6 sm:p-10">
+      <div class="inline-flex items-center gap-2 rounded-full border border-line bg-[var(--badge-bg)] px-3.5 py-1.5 text-[var(--badge-text)]">
+        <span class="h-2.5 w-2.5 rounded-full bg-emerald-600 dark:bg-emerald-400" aria-hidden="true"></span>
+        <h1 class="text-xs font-bold uppercase tracking-wider sm:text-sm">
+          {t.hireMe.badge}
+        </h1>
+      </div>
+
+      <h2 class="mt-5 text-3xl font-bold tracking-tight text-ink-primary sm:text-4xl">
+        {t.hireMe.heading}
+      </h2>
+
+      <p class="mt-4 text-lg font-medium text-ink-primary">
+        {t.hireMe.intro}
+      </p>
+
+      <p class="mt-3 text-base leading-relaxed text-ink-secondary">
+        {t.hireMe.subcopy}
+      </p>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        {t.hireMe.specialties.map((spec, index) => (
+          <div class="flex flex-col rounded-xl border border-line bg-subtle/35 p-5">
+            <span class="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-accent-slate font-mono text-sm font-bold text-page dark:bg-accent dark:text-[#11151C]">
+              0{index + 1}
+            </span>
+            <h3 class="text-base font-bold leading-snug text-ink-primary">
+              {spec.title}
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-secondary">
+              {spec.description}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-10 rounded-2xl border border-line bg-subtle/45 p-6 sm:p-8">
+        <h3 class="text-xl font-bold text-ink-primary sm:text-2xl">
+          {t.hireMe.ctaHeading}
+        </h3>
+
+        <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <a
+            href={`mailto:${t.hireMe.email}`}
+            class="inline-flex items-center gap-2 text-base font-semibold text-accent-text hover:underline"
+          >
+            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+            <span>{t.hireMe.emailLabel}</span>
+          </a>
+
+          <button
+            type="button"
+            id="copy-email-btn"
+            data-email={t.hireMe.email}
+            data-label-default={t.hireMe.copyButtonLabel}
+            data-label-copied={t.hireMe.copiedLabel}
+            class="btn-primary inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </svg>
+            <span id="copy-email-label">{t.hireMe.copyButtonLabel}</span>
+          </button>
+        </div>
+        <span id="copy-email-status" class="sr-only" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <div class="mt-8 flex justify-center">
+      <a
+        href={getLocalizedPath(locale, 'home')}
+        class="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-line bg-card px-5 py-2.5 text-sm font-semibold text-ink-primary transition-colors hover:bg-subtle"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5" />
+          <path d="m12 19-7-7 7-7" />
+        </svg>
+        <span>{t.hireMe.playChessCta}</span>
+      </a>
+    </div>
+  </article>
+
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('copy-email-btn');
+      var labelEl = document.getElementById('copy-email-label');
+      var statusEl = document.getElementById('copy-email-status');
+      if (!btn || !labelEl) return;
+
+      btn.addEventListener('click', function () {
+        var email = btn.getAttribute('data-email') || '';
+        var defaultLabel = btn.getAttribute('data-label-default') || 'Copy Email';
+        var copiedLabel = btn.getAttribute('data-label-copied') || 'Copied!';
+
+        function showCopied() {
+          labelEl.textContent = copiedLabel;
+          if (statusEl) statusEl.textContent = copiedLabel;
+          window.setTimeout(function () {
+            labelEl.textContent = defaultLabel;
+            if (statusEl) statusEl.textContent = '';
+          }, 2200);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email).then(showCopied).catch(function () {
+            fallbackCopy(email, showCopied);
+          });
+        } else {
+          fallbackCopy(email, showCopied);
+        }
+      });
+
+      function fallbackCopy(text, onDone) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          onDone();
+        } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    })();
+  </script>
+</BaseLayout>

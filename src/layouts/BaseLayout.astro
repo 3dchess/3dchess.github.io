@@ -1,0 +1,235 @@
+---
+import '../styles/global.css';
+import type { LocaleCode, PageSlug } from '../i18n/locales';
+import {
+  SITE_URL,
+  SUPPORTED_LOCALES,
+  getCanonicalUrl,
+  getHreflangLinks,
+  getLocaleMeta,
+} from '../i18n/locales';
+import { getTranslations } from '../i18n/translations';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  locale: LocaleCode;
+  page: PageSlug;
+  title: string;
+  description: string;
+  schemas?: Record<string, unknown>[];
+}
+
+const { locale, page, title, description, schemas = [] } = Astro.props;
+const t = getTranslations(locale);
+const localeMeta = getLocaleMeta(locale);
+const canonicalUrl = getCanonicalUrl(locale, page);
+const hreflangLinks = getHreflangLinks(page);
+const ogImageUrl = `${SITE_URL}/og-image.png`;
+const alternateOgLocales = SUPPORTED_LOCALES.filter((l) => l.code !== locale).map((l) => l.ogLocale);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    {hreflangLinks.map((link) => (
+      <link rel="alternate" hreflang={link.hreflang} href={link.href} />
+    ))}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="3DChess" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={localeMeta.ogLocale} />
+    {alternateOgLocales.map((altLocale) => (
+      <meta property="og:locale:alternate" content={altLocale} />
+    ))}
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.ogImageAlt} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- PWA & Icons -->
+    <meta name="theme-color" content="#A68A64" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="3DChess" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+
+    <!-- Anti-FOUC Theme Initialization -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (stored === 'dark' || (!stored && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Google Tag Manager & GA4 -->
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-K2RDH227"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0RN16XSERQ');
+    </script>
+
+    <!-- Structured Data (JSON-LD) -->
+    {schemas.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
+  </head>
+  <body class="flex min-h-screen flex-col font-sans antialiased selection:bg-accent/30">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K2RDH227" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent-slate focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+    >
+      {t.nav.skipToContent}
+    </a>
+
+    <Navbar locale={locale} page={page} />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer locale={locale} page={page} />
+
+    <!-- Lightweight shell interactivity: Theme toggle, Language popover, PWA Add to Home Screen & SW registration -->
+    <script is:inline define:vars={{ installedLabel: t.nav.installedLabel }}>
+      (function () {
+        // 1. Theme toggle
+        var themeButtons = document.querySelectorAll('[data-theme-toggle]');
+        function syncThemeButtons() {
+          var isDark = document.documentElement.classList.contains('dark');
+          themeButtons.forEach(function (btn) {
+            btn.setAttribute('aria-pressed', String(isDark));
+          });
+        }
+        syncThemeButtons();
+        themeButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var nextDark = !document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', nextDark);
+            try {
+              localStorage.setItem('theme', nextDark ? 'dark' : 'light');
+            } catch (e) {}
+            syncThemeButtons();
+            window.dispatchEvent(new CustomEvent('themechange', { detail: { dark: nextDark } }));
+          });
+        });
+
+        // 2. Language selector popover
+        var langButtons = document.querySelectorAll('[data-lang-toggle]');
+        var langPopover = document.getElementById('lang-menu-popover');
+        function setLangOpen(open) {
+          if (!langPopover) return;
+          langPopover.hidden = !open;
+          langButtons.forEach(function (btn) {
+            btn.setAttribute('aria-expanded', String(open));
+          });
+        }
+        langButtons.forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (!langPopover) return;
+            setLangOpen(langPopover.hidden);
+          });
+        });
+        document.addEventListener('click', function (e) {
+          if (!langPopover || langPopover.hidden) return;
+          if (!langPopover.contains(e.target)) {
+            setLangOpen(false);
+          }
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            setLangOpen(false);
+            setPwaModalOpen(false);
+          }
+        });
+
+        // 3. Offline PWA install prompt & iOS Safari popover
+        var deferredPrompt = null;
+        var installButtons = document.querySelectorAll('[data-pwa-install]');
+        var installLabels = document.querySelectorAll('[data-pwa-install-label]');
+        var pwaModal = document.getElementById('pwa-ios-modal');
+        var pwaCloseButtons = document.querySelectorAll('[data-pwa-modal-close]');
+
+        function setPwaModalOpen(open) {
+          if (!pwaModal) return;
+          pwaModal.hidden = !open;
+          pwaModal.classList.toggle('hidden', !open);
+          pwaModal.classList.toggle('flex', open);
+        }
+
+        window.addEventListener('beforeinstallprompt', function (e) {
+          e.preventDefault();
+          deferredPrompt = e;
+        });
+
+        window.addEventListener('appinstalled', function () {
+          deferredPrompt = null;
+          installLabels.forEach(function (el) {
+            el.textContent = installedLabel;
+          });
+        });
+
+        installButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (deferredPrompt) {
+              deferredPrompt.prompt();
+              deferredPrompt.userChoice.finally(function () {
+                deferredPrompt = null;
+              });
+            } else {
+              setPwaModalOpen(true);
+            }
+          });
+        });
+
+        pwaCloseButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            setPwaModalOpen(false);
+          });
+        });
+        if (pwaModal) {
+          pwaModal.addEventListener('click', function (e) {
+            if (e.target === pwaModal) setPwaModalOpen(false);
+          });
+        }
+
+        // 4. Service Worker registration for 100% offline play
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js').catch(function () {});
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

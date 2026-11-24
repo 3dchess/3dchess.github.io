@@ -1,0 +1,365 @@
+---
+import type { LocaleCode, PageSlug } from '../i18n/locales';
+import { getLocalizedPath, SUPPORTED_LOCALES } from '../i18n/locales';
+import { getTranslations } from '../i18n/translations';
+
+interface Props {
+  locale: LocaleCode;
+  page: PageSlug;
+}
+
+const { locale, page } = Astro.props;
+const t = getTranslations(locale);
+
+const homeHref = getLocalizedPath(locale, 'home');
+const howToPlayHref = getLocalizedPath(locale, 'how-to-play');
+const hireMeHref = getLocalizedPath(locale, 'hire-me');
+const supportHref = 'https://kisharadilshan.gumroad.com/coffee';
+const githubHref = 'https://github.com/3dchess/3dchess.github.io';
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-page">
+  <div class="relative mx-auto max-w-6xl px-2 sm:px-6 lg:px-8">
+    <!-- Desktop Navigation (>= 1024px) -->
+    <nav aria-label="Main navigation" class="hidden h-16 items-center justify-between gap-3 lg:flex">
+      <div class="flex items-center gap-5">
+        <a
+          href={homeHref}
+          class="group inline-flex items-center gap-2.5 rounded-xl px-1.5 py-1 text-lg font-bold tracking-tight text-ink-primary transition-opacity hover:opacity-90"
+        >
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-slate text-page shadow-sm transition-transform group-hover:scale-105 dark:bg-accent dark:text-[#11151C]">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18 20H6v-2h12v2zm-1-3H7l1.2-3.6c.3-.9.9-1.7 1.7-2.2L11 10.5c-.8-.3-1.6-.4-2.4-.1l-1.8.6-.9-2.2 2.2-1.8c.9-.7 1.7-1.6 2.1-2.7L11 3h2.2l.8 1.5c1.7.4 3.1 1.6 3.7 3.3.5 1.4.4 3-.2 4.3-.4.8-.9 1.6-1.5 2.2L17 17z" />
+            </svg>
+          </span>
+          <span>3DChess</span>
+        </a>
+
+        <div class="flex items-center gap-1">
+          <a
+            href={homeHref}
+            aria-current={page === 'home' ? 'page' : undefined}
+            class:list={[
+              'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              page === 'home'
+                ? 'bg-subtle text-ink-primary font-semibold'
+                : 'text-ink-secondary hover:bg-subtle/60 hover:text-ink-primary',
+            ]}
+          >
+            {t.nav.home}
+          </a>
+          <a
+            href={howToPlayHref}
+            aria-current={page === 'how-to-play' ? 'page' : undefined}
+            class:list={[
+              'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              page === 'how-to-play'
+                ? 'bg-subtle text-ink-primary font-semibold'
+                : 'text-ink-secondary hover:bg-subtle/60 hover:text-ink-primary',
+            ]}
+          >
+            {t.nav.howToPlay}
+          </a>
+          <a
+            href={hireMeHref}
+            aria-current={page === 'hire-me' ? 'page' : undefined}
+            class:list={[
+              'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              page === 'hire-me'
+                ? 'bg-subtle text-ink-primary font-semibold'
+                : 'text-ink-secondary hover:bg-subtle/60 hover:text-ink-primary',
+            ]}
+          >
+            {t.nav.hireMe}
+          </a>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Language Selector -->
+        <button
+          type="button"
+          data-lang-toggle
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="lang-menu-popover"
+          aria-label={t.nav.languageAria}
+          class="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line bg-card px-2.5 text-xs font-semibold uppercase tracking-wide text-ink-primary transition-colors hover:bg-subtle"
+        >
+          <svg class="h-4 w-4 text-ink-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M2 12h20" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <span>{locale.toUpperCase()}</span>
+          <svg class="h-3.5 w-3.5 text-ink-secondary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06z" clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        <!-- Light/Dark Theme Toggle -->
+        <button
+          type="button"
+          data-theme-toggle
+          aria-label={t.nav.themeToggleAria}
+          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-card text-ink-primary transition-colors hover:bg-subtle"
+        >
+          <svg data-theme-icon-sun class="hidden h-5 w-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg data-theme-icon-moon class="block h-5 w-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+
+        <!-- Add to Home Screen (Offline PWA) -->
+        <button
+          type="button"
+          data-pwa-install
+          aria-label={t.nav.installAppAria}
+          class="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line bg-card px-3 text-xs font-semibold text-ink-primary transition-colors hover:bg-subtle"
+        >
+          <svg class="h-4 w-4 shrink-0 text-accent-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span data-pwa-install-label>{t.nav.installApp}</span>
+        </button>
+
+        <!-- Support the Developer -->
+        <a
+          href={supportHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.nav.supportDevAria}
+          class="btn-primary inline-flex h-10 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold"
+        >
+          <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+            <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+            <line x1="6" y1="2" x2="6" y2="4" />
+            <line x1="10" y1="2" x2="10" y2="4" />
+            <line x1="14" y1="2" x2="14" y2="4" />
+          </svg>
+          <span>{t.nav.supportDev}</span>
+        </a>
+
+        <!-- GitHub Repo Link (Git icon ONLY) -->
+        <a
+          href={githubHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.nav.githubAria}
+          class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line bg-card text-ink-primary transition-colors hover:bg-subtle"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z" />
+          </svg>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Mobile & Tablet Icon-Only Navigation (< 1024px, >= 48x48px touch targets, zero text clutter) -->
+    <nav
+      aria-label="Mobile navigation"
+      class="grid grid-cols-4 place-items-center gap-y-0.5 py-1 min-[400px]:flex min-[400px]:h-16 min-[400px]:items-center min-[400px]:justify-between min-[400px]:py-0 sm:justify-center sm:gap-2 lg:hidden"
+    >
+      <a
+        href={homeHref}
+        aria-label={t.nav.home}
+        aria-current={page === 'home' ? 'page' : undefined}
+        class:list={[
+          'inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl transition-colors',
+          page === 'home'
+            ? 'bg-accent-slate text-page shadow-sm dark:bg-accent dark:text-[#11151C]'
+            : 'text-ink-primary hover:bg-subtle',
+        ]}
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18 20H6v-2h12v2zm-1-3H7l1.2-3.6c.3-.9.9-1.7 1.7-2.2L11 10.5c-.8-.3-1.6-.4-2.4-.1l-1.8.6-.9-2.2 2.2-1.8c.9-.7 1.7-1.6 2.1-2.7L11 3h2.2l.8 1.5c1.7.4 3.1 1.6 3.7 3.3.5 1.4.4 3-.2 4.3-.4.8-.9 1.6-1.5 2.2L17 17z" />
+        </svg>
+      </a>
+
+      <a
+        href={howToPlayHref}
+        aria-label={t.nav.howToPlay}
+        aria-current={page === 'how-to-play' ? 'page' : undefined}
+        class:list={[
+          'inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl transition-colors',
+          page === 'how-to-play'
+            ? 'bg-accent-slate text-page shadow-sm dark:bg-accent dark:text-[#11151C]'
+            : 'text-ink-primary hover:bg-subtle',
+        ]}
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+      </a>
+
+      <a
+        href={hireMeHref}
+        aria-label={t.nav.hireMe}
+        aria-current={page === 'hire-me' ? 'page' : undefined}
+        class:list={[
+          'inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl transition-colors',
+          page === 'hire-me'
+            ? 'bg-accent-slate text-page shadow-sm dark:bg-accent dark:text-[#11151C]'
+            : 'text-ink-primary hover:bg-subtle',
+        ]}
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+        </svg>
+      </a>
+
+      <button
+        type="button"
+        data-lang-toggle
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-controls="lang-menu-popover"
+        aria-label={t.nav.languageAria}
+        class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl text-ink-primary transition-colors hover:bg-subtle"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M2 12h20" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        data-theme-toggle
+        aria-label={t.nav.themeToggleAria}
+        class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl text-ink-primary transition-colors hover:bg-subtle"
+      >
+        <svg class="hidden h-6 w-6 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        </svg>
+        <svg class="block h-6 w-6 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        data-pwa-install
+        aria-label={t.nav.installAppAria}
+        class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl text-ink-primary transition-colors hover:bg-subtle"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+      </button>
+
+      <a
+        href={supportHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={t.nav.supportDevAria}
+        class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl text-accent-text transition-colors hover:bg-subtle"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+          <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+          <line x1="6" y1="2" x2="6" y2="4" />
+          <line x1="10" y1="2" x2="10" y2="4" />
+          <line x1="14" y1="2" x2="14" y2="4" />
+        </svg>
+      </a>
+
+      <a
+        href={githubHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={t.nav.githubAria}
+        class="inline-flex h-12 w-12 min-h-[48px] min-w-[48px] shrink-0 items-center justify-center rounded-xl text-ink-primary transition-colors hover:bg-subtle"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z" />
+        </svg>
+      </a>
+    </nav>
+
+    <!-- Shared Language Selector Popover -->
+    <div
+      id="lang-menu-popover"
+      role="menu"
+      hidden
+      class="surface-card absolute right-3 top-[4.25rem] z-50 w-48 rounded-xl p-1.5"
+    >
+      {SUPPORTED_LOCALES.map((loc) => (
+        <a
+          role="menuitem"
+          href={getLocalizedPath(loc.code, page)}
+          hreflang={loc.code}
+          class:list={[
+            'flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors',
+            loc.code === locale
+              ? 'bg-subtle font-semibold text-ink-primary'
+              : 'text-ink-secondary hover:bg-subtle/70 hover:text-ink-primary',
+          ]}
+        >
+          <span>{loc.label}</span>
+          <span class="font-mono text-xs uppercase opacity-75">{loc.code}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<!-- iOS Safari / Manual Offline Install Popover -->
+<div
+  id="pwa-ios-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="pwa-ios-title"
+  hidden
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+>
+  <div class="surface-card w-full max-w-md rounded-2xl p-6">
+    <div class="flex items-start justify-between gap-4">
+      <h2 id="pwa-ios-title" class="text-lg font-bold text-ink-primary">
+        {t.nav.iosInstallTitle}
+      </h2>
+      <button
+        type="button"
+        data-pwa-modal-close
+        aria-label={t.nav.close}
+        class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-ink-secondary hover:bg-subtle hover:text-ink-primary"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <ol class="mt-4 space-y-3 text-sm leading-relaxed text-ink-secondary">
+      <li class="flex gap-3">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-subtle text-xs font-bold text-ink-primary">1</span>
+        <span>{t.nav.iosInstallStep1}</span>
+      </li>
+      <li class="flex gap-3">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-subtle text-xs font-bold text-ink-primary">2</span>
+        <span>{t.nav.iosInstallStep2}</span>
+      </li>
+      <li class="flex gap-3">
+        <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-subtle text-xs font-bold text-ink-primary">3</span>
+        <span>{t.nav.iosInstallStep3}</span>
+      </li>
+    </ol>
+    <div class="mt-6 flex justify-end">
+      <button type="button" data-pwa-modal-close class="btn-primary rounded-lg px-4 py-2 text-sm font-semibold">
+        {t.nav.close}
+      </button>
+    </div>
+  </div>
+</div>

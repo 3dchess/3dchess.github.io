@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import type { LocaleCode } from '../../i18n/locales';
+import { getLocalizedPath } from '../../i18n/locales';
+import { getTranslations } from '../../i18n/translations';
+import { buildHowToSchemas } from '../../lib/schemas';
+
+interface Props {
+  locale: LocaleCode;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+const schemas = buildHowToSchemas(locale, t);
+---
+
+<BaseLayout
+  locale={locale}
+  page="how-to-play"
+  title={t.howToPlay.title}
+  description={t.howToPlay.description}
+  schemas={schemas}
+>
+  <article class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <Breadcrumbs locale={locale} page="how-to-play" />
+
+    <header class="mb-10">
+      <h1 class="text-3xl font-bold tracking-tight text-ink-primary sm:text-4xl">
+        {t.howToPlay.h1}
+      </h1>
+      <p class="mt-4 text-base leading-relaxed text-ink-secondary sm:text-lg">
+        {t.howToPlay.intro}
+      </p>
+    </header>
+
+    <div class="space-y-8">
+      {t.howToPlay.sections.map((section) => (
+        <section class="surface-card rounded-2xl p-6 sm:p-8">
+          <h2 class="text-xl font-bold tracking-tight text-ink-primary sm:text-2xl">
+            {section.title}
+          </h2>
+          <p class="mt-2 text-sm leading-relaxed text-ink-secondary sm:text-base">
+            {section.description}
+          </p>
+
+          <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+            {section.items.map((item) => (
+              <div class="rounded-xl border border-line bg-subtle/35 p-4">
+                <dt class="text-sm font-bold text-ink-primary">{item.label}</dt>
+                <dd class="mt-1.5 text-sm leading-relaxed text-ink-secondary">{item.detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ))}
+    </div>
+
+    <div class="mt-10 flex justify-center">
+      <a
+        href={getLocalizedPath(locale, 'home')}
+        class="btn-primary inline-flex min-h-[48px] items-center gap-2 rounded-xl px-6 py-3 text-base font-semibold"
+      >
+        <span>{t.howToPlay.startPlayingCta}</span>
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </article>
+</BaseLayout>

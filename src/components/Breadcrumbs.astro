@@ -1,0 +1,37 @@
+---
+import type { LocaleCode, PageSlug } from '../i18n/locales';
+import { getLocalizedPath } from '../i18n/locales';
+import { getTranslations } from '../i18n/translations';
+
+interface Props {
+  locale: LocaleCode;
+  page: Exclude<PageSlug, 'home'>;
+}
+
+const { locale, page } = Astro.props;
+const t = getTranslations(locale);
+
+const homeHref = getLocalizedPath(locale, 'home');
+const currentLabel = page === 'how-to-play' ? t.breadcrumbs.howToPlay : t.breadcrumbs.hireMe;
+---
+
+<nav aria-label={t.breadcrumbs.ariaLabel} class="mb-6">
+  <ol class="flex flex-wrap items-center gap-2 text-sm text-ink-secondary">
+    <li>
+      <a
+        href={homeHref}
+        class="inline-flex items-center gap-1.5 rounded-md py-1 font-medium text-ink-secondary transition-colors hover:text-ink-primary"
+      >
+        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 10.5 12 3l9 7.5" />
+          <path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" />
+        </svg>
+        <span>{t.breadcrumbs.home}</span>
+      </a>
+    </li>
+    <li aria-hidden="true" class="select-none text-ink-secondary/60">/</li>
+    <li aria-current="page" class="font-semibold text-ink-primary">
+      {currentLabel}
+    </li>
+  </ol>
+</nav>

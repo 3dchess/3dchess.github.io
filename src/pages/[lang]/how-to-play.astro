@@ -1,0 +1,14 @@
+---
+import HowToPlayView from '../../components/pages/HowToPlayView.astro';
+import { NON_DEFAULT_LOCALES, type LocaleCode } from '../../i18n/locales';
+
+export function getStaticPaths() {
+  return NON_DEFAULT_LOCALES.map((lang) => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params as { lang: LocaleCode };
+---
+
+<HowToPlayView locale={lang} />

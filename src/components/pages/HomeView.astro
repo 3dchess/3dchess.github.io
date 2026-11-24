@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Chess3DIsland from '../Chess3DIsland';
+import type { LocaleCode } from '../../i18n/locales';
+import { getLocalizedPath } from '../../i18n/locales';
+import { getTranslations } from '../../i18n/translations';
+import { buildHomeSchemas } from '../../lib/schemas';
+
+interface Props {
+  locale: LocaleCode;
+}
+
+const { locale } = Astro.props;
+const t = getTranslations(locale);
+const schemas = buildHomeSchemas(locale, t);
+---
+
+<BaseLayout
+  locale={locale}
+  page="home"
+  title={t.home.title}
+  description={t.home.description}
+  schemas={schemas}
+>
+  <!-- Above-the-Fold Hero: Focused on H1, brief subtitle, and the live 3D chessboard -->
+  <section class="mx-auto max-w-6xl px-4 pb-10 pt-6 sm:px-6 sm:pt-8 lg:px-8">
+    <div class="mx-auto mb-6 max-w-3xl text-center">
+      <h1 class="text-2xl font-bold tracking-tight text-ink-primary sm:text-3xl lg:text-4xl">
+        {t.home.h1}
+      </h1>
+      <p class="mt-2.5 text-sm leading-relaxed text-ink-secondary sm:text-base">
+        {t.home.heroSubtitle}
+      </p>
+    </div>
+
+    <Chess3DIsland client:load t={t.game} />
+  </section>
+
+  <!-- Below-the-Fold Natural 4-Question FAQ Section (mirrors FAQPage JSON-LD) -->
+  <section aria-labelledby="faq-heading" class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mb-8 text-center">
+      <h2 id="faq-heading" class="text-2xl font-bold tracking-tight text-ink-primary sm:text-3xl">
+        {t.home.faqHeading}
+      </h2>
+      <p class="mt-2 text-sm text-ink-secondary sm:text-base">
+        {t.home.faqSubheading}
+      </p>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      {t.home.faqs.map((faq) => (
+        <article class="surface-card rounded-2xl p-5 sm:p-6">
+          <h3 class="text-base font-bold leading-snug text-ink-primary">
+            {faq.question}
+          </h3>
+          <p class="mt-2.5 text-sm leading-relaxed text-ink-secondary">
+            {faq.answer}
+          </p>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-8 flex justify-center">
+      <a
+        href={getLocalizedPath(locale, 'how-to-play')}
+        class="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-line bg-card px-5 py-2.5 text-sm font-semibold text-ink-primary transition-colors hover:bg-subtle"
+      >
+        <span>{t.nav.howToPlay}</span>
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
